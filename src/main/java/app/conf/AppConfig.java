@@ -33,6 +33,9 @@ public class AppConfig {
   @Value("${datasource.password}")
   private String password;
 
+  @Value("${liquibase.changelog}")
+  private String changeLogFile;
+
   @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -46,7 +49,7 @@ public class AppConfig {
   @Bean
   public SpringLiquibase liquibase() {
     SpringLiquibase liquibase = new SpringLiquibase();
-    liquibase.setChangeLog("classpath:db/changelog/liquibase-changeLog.xml");
+    liquibase.setChangeLog(changeLogFile);
     liquibase.setDataSource(dataSource());
     liquibase.setContexts(getActiveProfile());
     return liquibase;
