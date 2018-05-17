@@ -1,7 +1,9 @@
 package app.conf;
 
 import liquibase.integration.spring.SpringLiquibase;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +13,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-/**
- * Created by rudolph on 14.05.18.
- */
 @Configuration
 @ComponentScan(basePackages = {"app.services", "app.dao"})
 @PropertySource({"classpath:${spring.profiles.active}/application.properties"})
 public class AppConfig {
+
+  @Autowired
+  private ApplicationContext appContext;
 
   @Value("${datasource.driver}")
   private String driverClass;
@@ -46,13 +48,17 @@ public class AppConfig {
     SpringLiquibase liquibase = new SpringLiquibase();
     liquibase.setChangeLog("classpath:db/changelog/liquibase-changeLog.xml");
     liquibase.setDataSource(dataSource());
+    liquibase.setContexts(getActiveProfile());
     return liquibase;
+  }
+
+  private String getActiveProfile() {
+    return appContext.getEnvironment().getActiveProfiles()[0];
   }
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
   }
-
 
 }
