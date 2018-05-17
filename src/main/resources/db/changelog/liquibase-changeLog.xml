@@ -26,4 +26,8 @@
             </column>
         </createTable>
     </changeSet>
+
+    <!-- Insert you new changeSets here -->
+
+    <include file="db/changelog/initial-data-loading.xml"/>
 </databaseChangeLog>

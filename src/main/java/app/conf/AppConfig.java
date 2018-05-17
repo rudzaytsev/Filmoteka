@@ -4,14 +4,12 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @Configuration
 @ComponentScan(basePackages = {"app.services", "app.dao"})
@@ -63,5 +61,12 @@ public class AppConfig {
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
   }
+
+  @Profile({"demo", "dev"})
+  @Bean(initMethod="start",destroyMethod="stop")
+  public org.h2.tools.Server h2WebServer() throws SQLException {
+    return org.h2.tools.Server.createWebServer("-web","-webAllowOthers","-webDaemon","-webPort", "8082");
+  }
+
 
 }
